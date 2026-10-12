@@ -33,8 +33,20 @@ function toScore(raw: number) {
   return Math.round(100 * (1 - Math.exp(-raw / 8)));
 }
 
+/** Same type within 3 days = probably the same event reported by several outlets: keep the strongest. */
+function dedupeEvents(signals: ScoredSignal[]) {
+  const kept: ScoredSignal[] = [];
+  for (const s of [...signals].sort((a, b) => b.strength - a.strength)) {
+    const dup = kept.some(
+      (k) => k.signal_type === s.signal_type && Math.abs(signalTime(k) - signalTime(s)) <= 3 * DAY,
+    );
+    if (!dup) kept.push(s);
+  }
+  return kept;
+}
+
 export function scoreAccount(signals: ScoredSignal[], now = Date.now()) {
-  const triggers = signals.filter((s) => s.strength >= MIN_TRIGGER_STRENGTH);
+  const triggers = dedupeEvents(signals.filter((s) => s.strength >= MIN_TRIGGER_STRENGTH));
   const windowStart = now - HOTLIST_WINDOW_DAYS * DAY;
   const recent = triggers.filter((s) => signalTime(s) >= windowStart);
 

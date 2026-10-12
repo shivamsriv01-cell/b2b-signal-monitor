@@ -93,8 +93,13 @@ ${recent.length ? recent.map((s) => `- ${s}`).join("\n") : "- none"}
 NEW ARTICLES TO CLASSIFY
 ${list}
 
-Classify every article by its [index]. Be strict: stock-price chatter, product launches unrelated to staff,
-and namesake companies are not triggers. Then, if any article or known signal is a real trigger, write the
+Classify every article by its [index]. Be strict:
+- Stock-price moves, share sales by existing investors (secondary/bulk deals, stake exits) and ESOP allotments are NOT
+  funding — only new capital raised by the company (equity/debt round, IPO proceeds) is funding.
+- One-off incidents involving a single employee (a crime, a complaint) are weak (strength ≤ 3) unless the article shows a
+  systemic workforce problem (attrition, strikes, compliance action, staffing shortages).
+- Product launches unrelated to staff, and namesake companies, are not triggers.
+- If several articles report the SAME event, score only the most informative one normally; give the rest strength ≤ 2. Then, if any article or known signal is a real trigger, write the
 outreach_angle tailored to the deal stage (${stage}): ${
     stage === "customer"
       ? "this is an existing customer — frame it as an expansion/upsell."

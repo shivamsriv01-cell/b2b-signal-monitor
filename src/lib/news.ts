@@ -51,7 +51,7 @@ async function fetchFeed(query: string): Promise<Article[]> {
 }
 
 /** Recent news for one account: a broad query plus a trigger-focused one, de-duplicated. */
-export async function fetchAccountNews(newsQuery: string, max = 15): Promise<Article[]> {
+export async function fetchAccountNews(newsQuery: string, max = 15, maxAgeDays = 14): Promise<Article[]> {
   const feeds = await Promise.allSettled([
     fetchFeed(`${newsQuery} when:7d`),
     fetchFeed(`${newsQuery} ${TRIGGER_TERMS} when:14d`),
@@ -71,7 +71,10 @@ export async function fetchAccountNews(newsQuery: string, max = 15): Promise<Art
   if (out.length === 0 && feeds.every((f) => f.status === "rejected")) {
     throw (feeds[0] as PromiseRejectedResult).reason;
   }
+  // Google News sometimes ignores `when:` — enforce the age limit ourselves.
+  const cutoff = new Date(Date.now() - maxAgeDays * 86_400_000).toISOString();
   return out
+    .filter((a) => !a.publishedAt || a.publishedAt >= cutoff)
     .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
     .slice(0, max);
 }
