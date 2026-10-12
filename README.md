@@ -4,6 +4,8 @@ This tool tells Arjun which of his accounts are warm this week and why. It scans
 
 The system writes only to signal-derived columns. Arjun's notes, last-contact dates, stage and relationship read are protected at the database level. See [COMPONENTS.md](COMPONENTS.md) for the Components Map.
 
+![Components Map](docs/components-map.png)
+
 ## Stack
 Next.js 15 on Vercel · Supabase (Postgres) · Gemini Flash (`@google/genai`) · Google News RSS (live data) · Resend (email) · Vercel Cron
 

@@ -1,5 +1,9 @@
 # Components Map — B2B Account Signal Monitor
 
+![Components Map](docs/components-map.png)
+
+<sub>High-res: [PNG](docs/components-map.png) · [SVG](docs/components-map.svg). Mermaid version below.</sub>
+
 ```mermaid
 flowchart LR
   subgraph Schedule["Vercel Cron"]
