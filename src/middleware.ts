@@ -1,23 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { SESSION_COOKIE, sessionToken } from "@/lib/session";
 
-// Basic-auth gate for the dashboard (Arjun's notes are private).
+// Password gate for the dashboard (Arjun's notes are private).
 // Cron routes are excluded — they authenticate with CRON_SECRET instead.
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const password = process.env.DASHBOARD_PASSWORD;
   if (!password) return NextResponse.next();
 
-  const header = req.headers.get("authorization");
-  if (header?.startsWith("Basic ")) {
-    const decoded = atob(header.slice(6));
-    const pass = decoded.slice(decoded.indexOf(":") + 1);
-    if (pass === password) return NextResponse.next();
-  }
-  return new NextResponse("Authentication required", {
-    status: 401,
-    headers: { "WWW-Authenticate": 'Basic realm="Signal Monitor"' },
-  });
+  const cookie = req.cookies.get(SESSION_COOKIE)?.value;
+  if (cookie && cookie === (await sessionToken(password))) return NextResponse.next();
+
+  return NextResponse.redirect(new URL("/login", req.url));
 }
 
 export const config = {
-  matcher: ["/((?!api/cron|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api/cron|login|_next/static|_next/image|favicon.ico).*)"],
 };
