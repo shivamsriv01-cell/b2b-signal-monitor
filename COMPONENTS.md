@@ -7,8 +7,8 @@
 ```mermaid
 flowchart LR
   subgraph Schedule["Vercel Cron"]
-    C1["/api/cron/scan<br/>daily 06:00 IST (Tue/Wed/Fri/Sat/Sun)"]
-    C2["/api/cron/hotlist<br/>Mon + Thu 08:00 IST"]
+    C1["/api/cron/scan<br/>06:00 IST Sun/Tue/Wed/Fri/Sat"]
+    C2["/api/cron/hotlist<br/>scan + email, Mon + Thu 08:00 IST"]
   end
 
   subgraph Sources["Live external data"]
